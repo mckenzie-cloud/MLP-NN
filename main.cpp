@@ -1,6 +1,6 @@
 
 /*********************************************************************
- *                 -- Classifying Handwritten Digits --              *
+ *             -- Multilayer perceptron from scratch --              *
  *                                                                   *
  *                  © Kento Mackenzie Regalado. 2026                 *
  *                                                                   *
@@ -186,8 +186,8 @@ void display_digit_label(const MNIST &m, uint idx)
  * Initializing parameters and miscellaneous functions for the model *
    ----------------------------------------------------------------- */
 const size_t input_size = 784;
-const size_t hidden1_size = 128;
-const size_t hidden2_size = 64;
+const size_t hidden1_size = 256;
+const size_t hidden2_size = 128;
 const size_t output_size = 10;
 const size_t num_classes = 10;
 const size_t batch_size = 32;
