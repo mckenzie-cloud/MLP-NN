@@ -328,7 +328,8 @@ void apply_softmax(const Matrix &z, Matrix &a)
     }
 }
 
-float compute_loss(const Matrix &predicted, const Matrix &y_true)
+// categorical-cross entrophy loss function
+float cce_loss(const Matrix &predicted, const Matrix &y_true)
 {
     /*
      * yk - is the true probability of class k, typically represented as 1 for the correct class and 0 for all other classes.
@@ -350,7 +351,7 @@ float compute_loss(const Matrix &predicted, const Matrix &y_true)
 
             if (yk > 0.0f)
             {
-                float pk = std::clamp(predicted[row][col], 1e-15f, 1.0f - 1e-15f);
+                float pk = std::clamp(predicted[row][col], eps, 1.0f - eps);
                 sample_loss -= yk * std::logf(pk);
             }
         }
@@ -676,7 +677,7 @@ float validate(const Matrix &validation_images,
                      std::nullopt, std::nullopt, false);
 
         // Loss
-        total_val_loss += compute_loss(val_a3, val_batch_y);
+        total_val_loss += cce_loss(val_a3, val_batch_y);
 
         // Accuracy
         std::vector<int> pred = get_argmax(val_a3);
@@ -1023,7 +1024,7 @@ int main(void)
                 total_samples += (float)batch_size;
 
                 // Track loss
-                float loss = compute_loss(a3, batch_y);
+                float loss = cce_loss(a3, batch_y);
                 total_loss += loss;
 
                 // // backward pass
