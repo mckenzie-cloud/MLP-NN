@@ -7,12 +7,12 @@
  *       Red Spartan | Batangas State University Malvar Campus       *
  *********************************************************************/
 
- /***********************************************************************************************
-  * Disclaimer: This project implements a Multilayer Perceptron (MLP) from scratch without      *
-  * using external ML libraries. The goal is to understand the underlying mathematics and       *
-  * logic of neural networks. Therefore, the code is not optimized for speed, memory efficiency,* 
-  * or large-scale training.                                                                    *
-  ***********************************************************************************************/
+/***********************************************************************************************
+ * Disclaimer: This project implements a Multilayer Perceptron (MLP) from scratch without      *
+ * using external ML libraries. The goal is to understand the underlying mathematics and       *
+ * logic of neural networks. Therefore, the code is not optimized for speed, memory efficiency,*
+ * or large-scale training.                                                                    *
+ ***********************************************************************************************/
 
 #include <iostream>
 #include <random>
@@ -30,6 +30,8 @@
 #include <functional>
 #include <thread>
 #include <cstdint>
+
+#define PI 3.141592653589793
 
 using Matrix = std::vector<std::vector<float>>;
 using uchar = unsigned char;
@@ -196,7 +198,7 @@ const size_t lr_step = 5;
 const int early_stopping_patience = 5; // Stop after 5 epochs of no improvement
 
 const float base_lr = 0.001f;
-const float lr_decay = 0.15f;
+const float lr_decay = 0.5f;
 const float weight_decay = 1e-4f;
 const float dropout_rate = 0.2f;
 const float beta_1 = 0.9f;
@@ -240,11 +242,11 @@ void dot_product(const Matrix &A, const Matrix &B, Matrix &C)
     const size_t b_rows = B.size();
     const size_t b_cols = B[0].size();
 
-    for (auto &row : C)
-        std::fill(row.begin(), row.end(), 0.0f);
-
     if (a_cols != b_rows)
         throw std::invalid_argument("Incompatible dimensions for multiplication");
+
+    for (auto &row : C)
+        std::fill(row.begin(), row.end(), 0.0f);
 
     for (size_t i = 0; i < a_rows; ++i)
         for (size_t k = 0; k < a_cols; ++k) // iterate over the "inner" dimension
@@ -1028,7 +1030,8 @@ int main(void)
                 backward_pass(Tbatch_x, batch_y, z1, a1, z2, a2, z3, a3, dW1, dB1, dW2, dB2, dW3, dB3, noise1, noise2);
 
                 // learning rate decay
-                float lr = base_lr * std::powf(lr_decay, epoch / lr_step);
+                float lr = base_lr * lr_decay * (1.0f + std::cosf(static_cast<float>(epoch) / epochs * PI));
+
                 // // update parameters
                 update_parameters(dW1, dB1, dW2, dB2, dW3, dB3,
                                   W1_mt, B1_mt, W1_vt, B1_vt,
